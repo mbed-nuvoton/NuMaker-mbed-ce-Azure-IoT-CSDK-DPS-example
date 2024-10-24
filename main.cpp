@@ -38,6 +38,8 @@
 
 #include "certs.h"
 
+#include "aziot_user_config.h"
+
 #ifdef USE_PROV_MODULE_FULL
 #define HSM_TYPE_SYMM_KEY                   1
 #define HSM_TYPE_X509                       2
@@ -60,12 +62,12 @@
 MU_DEFINE_ENUM_STRINGS_WITHOUT_INVALID(PROV_DEVICE_RESULT, PROV_DEVICE_RESULT_VALUE);
 MU_DEFINE_ENUM_STRINGS_WITHOUT_INVALID(PROV_DEVICE_REG_STATUS, PROV_DEVICE_REG_STATUS_VALUES);
 
-static const char* global_prov_uri = MBED_CONF_APP_PROVISION_ENDPOINT;
-static const char* id_scope = MBED_CONF_APP_PROVISION_ID_SCOPE;
+static const char* global_prov_uri = AZIOT_CONF_APP_PROVISION_ENDPOINT;
+static const char* id_scope = AZIOT_CONF_APP_PROVISION_ID_SCOPE;
 
-#if (MBED_CONF_APP_HSM_TYPE == HSM_TYPE_SYMM_KEY)
-static const char* registration_id = MBED_CONF_APP_PROVISION_REGISTRATION_ID;
-static const char* symmetric_key = MBED_CONF_APP_PROVISION_SYMMETRIC_KEY;
+#if (AZIOT_CONF_APP_HSM_TYPE == HSM_TYPE_SYMM_KEY)
+static const char* registration_id = AZIOT_CONF_APP_PROVISION_REGISTRATION_ID;
+static const char* symmetric_key = AZIOT_CONF_APP_PROVISION_SYMMETRIC_KEY;
 #endif
 #else
 // MQTT protocol
@@ -165,9 +167,9 @@ NetworkInterface *_defaultSystemNetwork;
 int main()
 {
 #ifdef USE_PROV_MODULE_FULL
-#if (MBED_CONF_APP_HSM_TYPE == HSM_TYPE_SYMM_KEY)
+#if (AZIOT_CONF_APP_HSM_TYPE == HSM_TYPE_SYMM_KEY)
     SECURE_DEVICE_TYPE hsm_type = SECURE_DEVICE_TYPE_SYMMETRIC_KEY;
-#elif (MBED_CONF_APP_HSM_TYPE == HSM_TYPE_X509)
+#elif (AZIOT_CONF_APP_HSM_TYPE == HSM_TYPE_X509)
     SECURE_DEVICE_TYPE hsm_type = SECURE_DEVICE_TYPE_X509;
 #endif
 #endif  /* USE_PROV_MODULE_FULL */
@@ -209,7 +211,7 @@ int main()
 #ifdef USE_PROV_MODULE_FULL
     (void)prov_dev_security_init(hsm_type);
 
-#if (MBED_CONF_APP_HSM_TYPE == HSM_TYPE_SYMM_KEY)
+#if (AZIOT_CONF_APP_HSM_TYPE == HSM_TYPE_SYMM_KEY)
     // Set registration ID / symmetric key if using HSM symmkey
     prov_dev_set_symmetric_key_info(registration_id, symmetric_key);
 #endif
@@ -283,9 +285,9 @@ int main()
             LogInfo("failed create IoTHub client from connection string %s!\r\n", user_ctx.iothub_uri);
         }
 #else
-        if ((device_ll_handle = IoTHubDeviceClient_LL_CreateFromConnectionString(MBED_CONF_APP_IOTHUB_CONNECTION_STRING, iothub_transport) ) == NULL)
+        if ((device_ll_handle = IoTHubDeviceClient_LL_CreateFromConnectionString(AZIOT_CONF_APP_DEVICE_CONNECTION_STRING, iothub_transport) ) == NULL)
         {
-            LogInfo("failed create IoTHub client from connection string %s!\r\n", MBED_CONF_APP_IOTHUB_CONNECTION_STRING);
+            LogInfo("failed create IoTHub client from connection string %s!\r\n", AZIOT_CONF_APP_DEVICE_CONNECTION_STRING);
         }
 #endif /* USE_PROV_MODULE_FULL */
         else
